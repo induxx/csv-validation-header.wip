@@ -6,6 +6,7 @@ use Misery\Component\Common\Format\ArrayFormat;
 use Misery\Component\Common\Format\StringFormat;
 use Misery\Component\Common\Modifier\RowModifier;
 use Misery\Component\Common\Options\OptionsInterface;
+use Misery\Component\Converter\ConverterInterface;
 
 class ItemDecoder
 {

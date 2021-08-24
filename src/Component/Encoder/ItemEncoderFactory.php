@@ -2,31 +2,45 @@
 
 namespace Misery\Component\Encoder;
 
+use Misery\Component\Common\Registry\RegisteredByNameInterface;
 use Misery\Component\Common\Registry\RegistryInterface;
+use Misery\Component\Configurator\ConfigurationManager;
+use Misery\Component\Converter\ConverterInterface;
 
-class ItemEncoderFactory
+class ItemEncoderFactory implements RegisteredByNameInterface
 {
     private $registryCollection;
 
-    public function addRegistry(RegistryInterface $registry)
+    public function addRegistry(RegistryInterface $registry): ItemEncoderFactory
     {
         $this->registryCollection[$registry->getAlias()] = $registry;
 
         return $this;
     }
 
-    public function createItemEncoder(array $configuration)
+    public function createFromConfiguration(array $configuration, ConfigurationManager $configurationManager): ItemEncoder
     {
-        return new ItemEncoder(
-            $this->prepRulesFromConfiguration($configuration)
-        );
+        // encoder can have a blueprint named reference
+        if (isset($configuration['blueprint'])) {
+            $bluePrint = $configurationManager->createBlueprint($configuration['blueprint']);
+            if ($bluePrint) {
+                return $bluePrint->getEncoder();
+            }
+        }
+
+        return $this->createItemEncoder($configuration);
     }
 
-    public function prepRulesFromConfiguration(array $configuration): array
+    public function createItemEncoder(array $configuration): ItemEncoder
+    {
+        return new ItemEncoder($this->parseDirectivesFromConfiguration($configuration));
+    }
+
+    public function parseDirectivesFromConfiguration(array $configuration): array
     {
         $rules = [];
-        foreach ($configuration['encode'] ?? [] as $property => $formatters) {
-            foreach ($formatters as $formatName => $formatOptions) {
+        foreach ($configuration['encode'] ?? [] as $property => $converters) {
+            foreach ($converters as $formatName => $formatOptions) {
                 if ($class = $this->getFormatClass($formatName)) {
                     $rules['property'][$property][$formatName] = [
                         'class' => $class,
@@ -48,6 +62,11 @@ class ItemEncoderFactory
         return $rules;
     }
 
+    private function getConverterClass(string $formatName)
+    {
+        return $this->registryCollection['converter']->filterByAlias($formatName);
+    }
+
     private function getModifierClass(string $formatName)
     {
         return $this->registryCollection['modifier']->filterByAlias($formatName);
@@ -56,5 +75,10 @@ class ItemEncoderFactory
     private function getFormatClass(string $formatName)
     {
         return $this->registryCollection['format']->filterByAlias($formatName);
+    }
+
+    public function getName(): string
+    {
+        return 'encoder';
     }
 }

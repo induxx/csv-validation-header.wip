@@ -12,12 +12,23 @@ encode:
   groups:
     list: ~
 
-parse:
+list:
+  - name: 'attribute_code_and_types'
+    source: attribute.csv
+    source_command: key_value_pair
+    options:
+      key: code
+      value: type
+
+converter:
+  name: 'akeneo/product/csv'
+  options:
+    list: 'attribute_code_and_types'
+
+reader:
   type: csv
-  unflatten:
-    separator: '-'
-  nullify: ~
   reference: sku
+  filename_match: product.csv
   format:
     delimiter: ';'
     enclosure: '"'

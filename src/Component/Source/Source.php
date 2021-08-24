@@ -2,41 +2,32 @@
 
 namespace Misery\Component\Source;
 
-use Misery\Component\Common\Cursor\CachedCursor;
-use Misery\Component\Common\Cursor\FunctionalCursor;
-use Misery\Component\Common\Repository\ItemRepository;
-use Misery\Component\Decoder\ItemDecoder;
-use Misery\Component\Encoder\ItemEncoder;
-use Misery\Component\Parser\CsvParser;
-use Misery\Component\Reader\ItemReader;
+use Misery\Component\Item\Processor\NullProcessor;
+use Misery\Component\Item\Processor\ProcessorInterface;
 use Misery\Component\Reader\ItemReaderInterface;
 
 class Source
 {
-    private $input;
     private $reader;
     private $alias;
-    /** @var ItemEncoder */
-    private $encoder;
-    /** @var ItemDecoder */
-    private $decoder;
-    /** @var array */
-    private $configuration;
-    /** @var ItemRepository */
-    private $repository;
+    private $processorIn;
+    private $processorOut;
 
     public function __construct(
-        ItemEncoder $encoder,
-        ItemDecoder $decoder,
-        array $configuration,
-        string $input,
+        ItemReaderInterface $reader,
+        ProcessorInterface $processorIn,
+        ProcessorInterface $processorOut,
         string $alias
     ) {
-        $this->input = $input;
         $this->alias = $alias;
-        $this->encoder = $encoder;
-        $this->decoder = $decoder;
-        $this->configuration = $configuration;
+        $this->reader = $reader;
+        $this->processorIn = $processorIn;
+        $this->processorOut = $processorOut;
+    }
+
+    public static function createSimple(ItemReaderInterface $reader, string $alias): self
+    {
+        return new self($reader, new NullProcessor(), new NullProcessor(), $alias);
     }
 
     public function getAlias(): string
@@ -44,54 +35,18 @@ class Source
         return $this->alias;
     }
 
-    public function encode($item)
+    public function encode(array $item): array
     {
-        return $this->encoder->encode($item);
+        return $this->processorIn->process($item);
     }
 
-    public function decode($item)
+    public function decode(array $item): array
     {
-        return $this->decoder->decode($item);
-    }
-
-    public function getRepository(): ItemRepository
-    {
-        if (null === $this->repository) {
-            $this->repository = new ItemRepository(
-                $this->getReader(),
-                $this->configuration['parse']['reference']
-            );
-        }
-
-        return $this->repository;
+        return $this->processorOut->process($item);
     }
 
     public function getReader(): ItemReaderInterface
     {
-        if (null === $this->reader) {
-            if ($this->configuration['parse']['type'] === 'csv') {
-
-                $format = $this->configuration['parse']['format'];
-
-                $this->reader = new ItemReader(
-                    new CachedCursor(
-                        new FunctionalCursor(
-                            CsvParser::create(
-                                $this->input,
-                                $format['delimiter'],
-                                $format['enclosure']
-                            ), function ($item) {
-                            return $this->encode($item);
-                        }
-                        ),
-                        [
-                            'cache_size' => CachedCursor::LARGE_CACHE_SIZE,
-                        ]
-                    )
-                );
-            }
-        }
-
         return $this->reader;
     }
 }

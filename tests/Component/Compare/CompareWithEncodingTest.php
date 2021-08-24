@@ -71,15 +71,15 @@ class CompareWithEncodingTest extends TestCase
         }));
 
         $tool = new ItemCompare(
-            $readerA = new ItemReader($setA),
-            $readerB = new ItemReader($setB)
+            $setA,
+            $setB
         );
 
         $result = $tool->compare('id');
 
-        $changedValues = current($result[ItemCompare::CHANGED])['changes'][ItemCompare::ADDED]['codes'];
+        $changedValues = current($result['items'][ItemCompare::CHANGED])['changes'][ItemCompare::ADDED]['codes'];
 
         $this->assertSame([3 => 'Z'], $changedValues);
-        $this->assertCount(1, $result[ItemCompare::CHANGED]);
+        $this->assertCount(1, $result['items'][ItemCompare::CHANGED]);
     }
 }

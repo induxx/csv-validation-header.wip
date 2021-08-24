@@ -28,6 +28,7 @@ class ReplaceAction implements OptionsInterface, ItemReaderAwareInterface
         'source_filter' => [],
         'source_reference' => 'code',
         'key' => null,
+        'list' => null,
         'format' => '[%s]',
         'content' => 'label',
         'locale' => null,
@@ -85,7 +86,7 @@ class ReplaceAction implements OptionsInterface, ItemReaderAwareInterface
         return $item;
     }
 
-    private function format(string $item = null)
+    private function format(string $item = null): ?string
     {
         return $item && $this->options['format'] ? sprintf($this->options['format'], $item) : null;
     }

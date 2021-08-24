@@ -7,6 +7,9 @@ use Misery\Component\Common\Format\StringFormat;
 use Misery\Component\Common\Modifier\CellModifier;
 use Misery\Component\Common\Modifier\RowModifier;
 use Misery\Component\Common\Options\OptionsInterface;
+use Misery\Component\Converter\ConverterInterface;
+use Misery\Component\Source\SourceCollection;
+use Misery\Component\Source\SourceCollectionAwareInterface;
 
 class ItemEncoder
 {
@@ -43,11 +46,6 @@ class ItemEncoder
         if ($class instanceof OptionsInterface && !empty($match['options'])) {
             $class->setOptions($match['options']);
         }
-
-//        if ($class instanceof ItemReaderAwareInterface) {
-//            $class->setReader($this->readers['current']);
-//            return;
-//        }
 
         switch (true) {
             case $class instanceof ArrayFormat:
