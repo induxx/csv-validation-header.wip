@@ -21,7 +21,18 @@ class ItemWriterFactory implements RegisteredByNameInterface
         )->notEmpty()->string()->inArray(['xml', 'buffer', 'buffer_csv', 'csv', 'yaml', 'yml', 'xlsx', 'json', 'jsonl']);
 
         $filename = $fileManager->provisionPath($configuration['filename']);
+        $batchSize = $configuration['batch_size'] ?? 0;
         if ($configuration['type'] === 'xml') {
+
+            if ($batchSize !== 0) {
+                return new BatchWriter(
+                    XmlWriter::class,
+                    $filename,
+                    $batchSize,
+                        $configuration['options'] ?? []
+                );
+            }
+
             return new XmlWriter(
                 $filename,
                 $configuration['options'] ?? []

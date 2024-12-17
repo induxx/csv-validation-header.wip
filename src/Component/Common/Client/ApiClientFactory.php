@@ -2,14 +2,21 @@
 
 namespace Misery\Component\Common\Client;
 
-use Misery\Component\Akeneo\Client\AkeneoApiClientAccount;
+use App\Component\Akeneo\Api\Client\AkeneoApiClientAccount;
+use App\Component\Common\Client\ApiClient;
+use App\Component\Common\Client\ApiCurlClient;
+use App\Component\Common\Client\ApiClientInterface;
+use Misery\Component\Common\Client\ApiClientInterface as BaseApiClientInterface;
 use Misery\Component\Connections\BusinessCentral\Client\MicrosoftDynamicsOauthAccount;
 use Misery\Component\Common\Registry\RegisteredByNameInterface;
 use Misery\Component\Connections\E5Dal\Client\E5DalAPIAccount;
 
+/**
+ * This Factory looks like a specific multi-tool implementation
+ */
 class ApiClientFactory implements RegisteredByNameInterface
 {
-    public function createFromConfiguration(array $account): ApiClientInterface
+    public function createFromConfiguration(array $account): ApiClientInterface|BaseApiClientInterface
     {
         $type = $account['type'] ?? null;
         if ($type === 'basic_auth') {
@@ -28,7 +35,7 @@ class ApiClientFactory implements RegisteredByNameInterface
         if ($type === 'microsoft_oauth') {
             try {
                 // no need to authorize a basic auth
-                $client = new ApiClient($account['domain']);
+                $client = new ApiCurlClient($account['domain']);
 
                 $account = new MicrosoftDynamicsOauthAccount(
                     $account['client_id'],
@@ -48,7 +55,7 @@ class ApiClientFactory implements RegisteredByNameInterface
         if ($type === 'e5_dal_token') {
             try {
                 // no need to authorize token is fixed
-                $client = new ApiClient($account['domain']);
+                $client = new ApiCurlClient($account['domain']);
 
                 $account = new E5DalAPIAccount($account['token']);
                 $client->authorize($account);
@@ -60,16 +67,16 @@ class ApiClientFactory implements RegisteredByNameInterface
         }
 
         try {
-            $client = new ApiClient($account['domain']);
-
             $account = new AkeneoApiClientAccount(
+                rtrim($account['domain'], '/'),
                 $account['username'],
                 $account['password'],
                 $account['client_id'],
                 $account['secret'] ?? $account['client_secret']
             );
 
-            $client->authorize($account);
+            $client = new ApiClient($account);
+            $client->authorize();
 
             return $client;
         } catch (\Exception $e) {

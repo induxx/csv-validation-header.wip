@@ -1,4 +1,4 @@
-FROM php:8.0-fpm
+FROM php:8.1-fpm
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
@@ -13,10 +13,14 @@ COPY app.ini $PHP_INI_DIR/conf.d/app.ini
 RUN apt update
 RUN apt install -y moreutils
 
+# pyhton panda (Transformations : Use a Virtual Environment /opt/venv)
 RUN apt-get update && \
-    apt-get --no-install-recommends --no-install-suggests --yes --quiet install python3 python3-pip && \
-    pip install pandas && \
-    apt-get clean && apt-get --yes --quiet autoremove --purge && \
-    rm -rf  /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-            /usr/share/doc/* /usr/share/groff/* /usr/share/info/* /usr/share/linda/* \
-            /usr/share/lintian/* /usr/share/locale/* /usr/share/man/*
+    apt-get install --no-install-recommends --yes python3 python3-pip python3-venv && \
+    python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install pandas && \
+    apt-get clean && apt-get --yes autoremove --purge && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+           /usr/share/doc/* /usr/share/groff/* /usr/share/info/* /usr/share/linda/* \
+           /usr/share/lintian/* /usr/share/locale/* /usr/share/man/*
+
+ENV PATH="/opt/venv/bin:$PATH"

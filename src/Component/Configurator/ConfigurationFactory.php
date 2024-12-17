@@ -49,7 +49,7 @@ class ConfigurationFactory
         );
     }
 
-    public function setChangeManager(ChangeManager $changeManager)
+    public function setChangeManager(ChangeManager $changeManager): void
     {
         $this->config->changeManager = $changeManager;
     }
@@ -108,7 +108,7 @@ class ConfigurationFactory
                 case $key === 'transformation_steps';
                     $this->config->setAsMultiStep();
                     $this->config->getLogger()->info(sprintf("Multi Step [%s]", basename($this->config->getContext('transformation_file'))));
-                    $this->manager->addTransformationSteps($configuration['transformation_steps'], $configuration);
+                    $this->manager->addTransformationSteps($configuration['transformation_steps'], $configuration, $this->config->getContext());
                     break;
                 case $key === 'pipeline';
                     $this->manager->configurePipelines($configuration['pipeline']);

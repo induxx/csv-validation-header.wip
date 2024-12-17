@@ -3,13 +3,15 @@
 namespace Misery\Component\Configurator;
 
 use App\Component\ChangeManager\ChangeManager;
+use App\Component\Common\Resource\NamedResourceInterface;
+use App\Component\Common\Resource\ResourceCollectionInterface;
 use Misery\Component\Action\ItemActionProcessorFactory;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Misery\Component\Action\ItemActionProcessor;
 use Misery\Component\BluePrint\BluePrint;
-use Misery\Component\Common\Client\ApiClient;
-use Misery\Component\Common\Client\ApiClientInterface;
+use App\Component\Common\Client\ApiClient;
+use App\Component\Common\Client\ApiClientInterface;
 use Misery\Component\Common\Collection\ArrayCollection;
 use Misery\Component\Common\FileManager\LocalFileManager;
 use Misery\Component\Common\Pipeline\Pipeline;
@@ -48,6 +50,7 @@ class Configuration
     private $accounts;
     private $isMultiStep = false;
     public ChangeManager $changeManager;
+    private array $resourceCollections = [];
     public ItemActionProcessorFactory $actionFactory;
 
     private array $extensions = [];
@@ -86,9 +89,14 @@ class Configuration
         $this->isMultiStep = true;
     }
 
-    public function addContext(array $context)
+    public function addContext(array $context): void
     {
         $this->context = array_merge($this->context, $context);
+    }
+
+    public function setContext(string $key, $value): void
+    {
+        $this->context[$key] = $value;
     }
 
     public function getContext(string $key = null)
@@ -104,6 +112,21 @@ class Configuration
     public function getSources(): SourceCollection
     {
         return $this->sources;
+    }
+
+    public function addResourceCollection(ResourceCollectionInterface|NamedResourceInterface $resourceCollection): void
+    {
+        $this->resourceCollections[$resourceCollection->getName()] = $resourceCollection;
+    }
+
+    public function getResourceCollection(string $name):? ResourceCollectionInterface
+    {
+        return $this->resourceCollections[$name] ?? null;
+    }
+
+    public function getResourceCollections(): array
+    {
+        return $this->resourceCollections;
     }
 
     public function addAccount(string $name, ApiClientInterface $apiClient)

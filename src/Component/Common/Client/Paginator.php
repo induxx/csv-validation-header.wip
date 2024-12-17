@@ -17,11 +17,11 @@ class Paginator
 
     public function __construct(
         ApiClientInterface $client,
-        ItemCollection $items,
-        string $first = null,
-        string $previous = null,
-        string $next = null,
-        int $count = null
+        ItemCollection     $items,
+        string             $first = null,
+        string             $previous = null,
+        string             $next = null,
+        int                $count = null
     ) {
         $this->client = $client;
         $this->first = $first;

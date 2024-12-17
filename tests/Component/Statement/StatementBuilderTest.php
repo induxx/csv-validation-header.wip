@@ -86,7 +86,7 @@ class StatementBuilderTest extends TestCase
     {
         $whenString = 'field1 == value1 OR field2 == value2';
         $statement = StatementBuilder::build($whenString);
-        $this->assertInstanceOf(EqualsStatement::class, $statement);
+        $this->assertInstanceOf(CollectionStatement::class, $statement);
         // Here you might want to add more specific assertions to check if the OR condition is properly set
     }
 

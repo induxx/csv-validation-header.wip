@@ -65,7 +65,7 @@ class SourceCollectionFactory implements RegisteredByNameInterface
         Assert::that($file)->file();
 
         $path = pathinfo($file);
-        if (in_array(strtolower($path['extension']), ['json', 'buffer'])) {
+        if (in_array(strtolower($path['extension']), ['json', 'jsonl',  'buffer'])) {
             $sourceCollection->add(
                 Source::createSimple(JsonFileParser::create($file), $alias ?? $path['basename'])
             );

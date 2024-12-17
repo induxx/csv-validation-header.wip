@@ -1,3 +1,8 @@
+context:
+  filter: []
+  identifier_filter_list: []
+  query: ''
+
 pipeline:
   input:
     http:
@@ -5,6 +10,10 @@ pipeline:
       account: '%akeneo_read_connection%'
       endpoint: '%endpoint%'
       method: GET
+      filter: '%filter%'
+      identifier_filter_list: '%identifier_filter_list%'
+      limiters:
+        querystring: '%query%'
   output:
     writer:
       type: jsonl

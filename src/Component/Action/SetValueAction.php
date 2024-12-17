@@ -5,8 +5,9 @@ namespace Misery\Component\Action;
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
 use Misery\Component\Converter\Matcher;
+use Misery\Model\DataStructure\ItemInterface;
 
-class SetValueAction implements ActionInterface, OptionsInterface
+class SetValueAction implements ActionItemInterface, OptionsInterface
 {
     use OptionsTrait;
 
@@ -17,17 +18,41 @@ class SetValueAction implements ActionInterface, OptionsInterface
         'key' => null,
         'field' => null,
         'value' => null,
+        'allow_creation' => false,
     ];
 
-    public function apply(array $item): array
+    public function applyAsItem(ItemInterface $item): void
     {
+        $allowCreation = $this->getOption('allow_creation');
         $field = $this->getOption('field', $this->getOption('key'));
         $value = $this->getOption('value');
 
-        $key = $this->findMatchedValueData($item, $field);
-        if ($key) {
-            $item[$key]['data'] = $value;
+        if ($allowCreation) {
+            $item->addItem($field, $value);
+            return;
+        }
 
+        if ($item->hasItem($field)) {
+            $item->editItemValue($field, $value);
+        }
+    }
+
+    public function apply(array $item): array
+    {
+        $allowCreation = $this->getOption('allow_creation');
+        $field = $this->getOption('field', $this->getOption('key'));
+        $value = $this->getOption('value');
+
+        $field = $this->findMatchedValueData($item, $field) ?? $field;
+
+        // matcher based data object
+        if (isset($item[$field]['data'])) {
+            $item[$field]['data'] = $value;
+            return $item;
+        }
+
+        if ($allowCreation) {
+            $item[$field] = $value;
             return $item;
         }
 

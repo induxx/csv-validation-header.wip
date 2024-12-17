@@ -35,7 +35,7 @@ class ItemReader implements ItemReaderInterface
     private function processIndex(array $lines): \Generator
     {
         foreach ($lines as $lineNr) {
-            $this->seek($lineNr);
+            $this->cursor instanceof \SeekableIterator ? $this->cursor->seek($lineNr) : $this->seek($lineNr);
             yield $lineNr => $this->cursor->current();
         }
     }

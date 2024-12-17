@@ -81,10 +81,11 @@ class SetValueActionTest extends TestCase
     public function test_it_should_set_fields_std_data()
     {
         $format = new SetValueAction();
+        $matcher = Matcher::create('values|street');
 
         $item = [
             'values|street' => [
-                'matcher' => Matcher::create('street'),
+                'matcher' => $matcher,
                 'scope' => null,
                 'locale' => null,
                 'data' => '123 Main Street',
@@ -98,7 +99,7 @@ class SetValueActionTest extends TestCase
 
         $this->assertEquals([
             'values|street' => [
-                'matcher' => Matcher::create('street'),
+                'matcher' => $matcher,
                 'scope' => null,
                 'locale' => null,
                 'data' => null,
@@ -112,7 +113,7 @@ class SetValueActionTest extends TestCase
 
         $this->assertEquals([
             'values|street' => [
-                'matcher' => Matcher::create('street'),
+                'matcher' => $matcher,
                 'scope' => null,
                 'locale' => null,
                 'data' => 'unknown',

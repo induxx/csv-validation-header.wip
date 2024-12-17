@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": "8.*|7.4.*|7.3.*|7.2.*",
+        "php": ">=8.1",
         "ext-json": "*",
         "ext-iconv": "*",
         "ext-xmlwriter": "*",
@@ -17,12 +17,13 @@
         "ext-curl": "*",
         "ext-zip": "*",
         "ext-simplexml": "*",
-        "symfony/yaml": "6.*|5.*|^4.3|^3.4",
+        "symfony/yaml": "6.*",
         "beberlei/assert": "^3.3",
         "adhocore/cli": "^0.9.0",
         "firebase/php-jwt": "^v6.8",
         "aspera/xlsx-reader": "^1.1.0",
-        "psr/log": "^3.0"
+        "psr/log": "^3.0",
+        "induxx/shared-app-libraries": "dev-main as 1.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-master",
@@ -47,6 +48,12 @@
             "Tests\\Misery\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://app-satis.induxx.be"
+        }
+    ],
     "scripts": {
         "test": [
             "php vendor/bin/phpunit",

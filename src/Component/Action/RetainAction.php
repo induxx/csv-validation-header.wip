@@ -4,6 +4,7 @@ namespace Misery\Component\Action;
 
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
+use Misery\Model\DataStructure\ItemInterface;
 
 class RetainAction implements OptionsInterface
 {
@@ -13,7 +14,8 @@ class RetainAction implements OptionsInterface
 
     /** @var array */
     private $options = [
-        'keys' => [],
+        'keys' => null,
+        'fields' => [],
         'mode' => 'multi',
     ];
 
@@ -22,7 +24,8 @@ class RetainAction implements OptionsInterface
      */
     private function applyForSingleDimensionItem(array $item): array
     {
-        $keys = array_intersect($this->options['keys'], array_keys($item));
+        $fields = $this->getOption('keys', $this->getOption('fields'));
+        $keys = array_intersect($fields, array_keys($item));
         if (empty($keys)) {
             return $item;
         }
@@ -35,6 +38,22 @@ class RetainAction implements OptionsInterface
         return $tmp;
     }
 
+    public function applyAsItem(ItemInterface $item): ItemInterface
+    {
+        $fields = $this->getOption('keys', $this->getOption('fields'));
+        if (empty($fields)) {
+            return $item;
+        }
+
+        $itemCodesToRemove = array_diff($item->getItemCodes(), $fields);
+        foreach ($itemCodesToRemove as $itemCode) {
+            $item->removeItem($itemCode);
+        }
+
+        return $item;
+    }
+
+
     /**
      * The default apply will look into for multi dimensional array
      */
@@ -44,7 +63,7 @@ class RetainAction implements OptionsInterface
             return $this->applyForSingleDimensionItem($item);
         }
 
-        $optionsToKeep = $this->options['keys'];
+        $optionsToKeep = $this->getOption('keys', $this->getOption('fields'));
 
         // we loop all configured option values
         $valuesToKeep = $this->getNestedValuesToKeep($optionsToKeep);

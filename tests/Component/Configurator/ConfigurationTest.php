@@ -5,7 +5,7 @@ namespace Tests\Misery\Component\Configurator;
 use Misery\Component\Common\Collection\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Misery\Component\Configurator\Configuration;
-use Misery\Component\Common\Client\ApiClientInterface;
+use App\Component\Common\Client\ApiClientInterface;
 use Misery\Component\BluePrint\BluePrint;
 use Misery\Component\Common\FileManager\LocalFileManager;
 use Misery\Component\Common\Pipeline\Pipeline;

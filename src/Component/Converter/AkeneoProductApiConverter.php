@@ -30,7 +30,7 @@ class AkeneoProductApiConverter implements ConverterInterface, RegisteredByNameI
         // first we need to convert the values
         foreach ($item[$container] ?? [] as $key => $valueSet) {
             foreach ($valueSet ?? [] as  $value) {
-                $matcher = Matcher::create($container.'|'.$key, $value['locale'], $value['scope']);
+                $matcher = Matcher::create($container.'|'.$key, $value['locale'] ?? null, $value['scope'] ?? null);
                 $tmp[$keyMain = $matcher->getMainKey()] = $value['data'] ?? null;
                 if ($this->getOption('structure') === 'matcher') {
                     $tmp[$keyMain] = $value;
