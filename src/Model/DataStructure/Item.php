@@ -40,7 +40,7 @@ class Item implements ItemInterface
         }
 
         // Property Values
-        if (is_string($itemValue)) {
+        if (!is_array($itemValue)) {
             $this->addItem($toCode, $itemValue, $item->getContext());
             return;
         }
