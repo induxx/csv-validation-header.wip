@@ -65,16 +65,4 @@ class ArrayCollection
     {
         return $this->items;
     }
-
-    public function addValues(array $items): void
-    {
-        foreach (array_filter($items) as $key => $item) {
-            $this->set($key, $item);
-        }
-    }
-
-    public function purge(): void
-    {
-        $this->items = [];
-    }
 }

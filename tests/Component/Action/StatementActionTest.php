@@ -370,43 +370,4 @@ class StatementActionTest extends TestCase
         ]);
         $this->assertSame('TRUE', $format->apply($item)['correct']);
     }
-
-    public function test_it_should_support_other_data_types(): void
-    {
-        $format = new StatementAction();
-
-        $item = [
-            'correct' => null,
-            'A' => '10',
-            'sku' => '1',
-        ];
-
-        $format->setOptions([
-            'when' => 'A NOT_EMPTY',
-            'then' => [
-                'correct' => true,
-            ],
-        ]);
-
-        $this->assertTrue($format->apply($item)['correct']);
-
-        $format->setOptions([
-            'when' => 'A NOT_EMPTY',
-            'then' => [
-                'correct' => 2.3456,
-            ],
-        ]);
-
-        $this->assertSame(2.3456, $format->apply($item)['correct']);
-
-
-        $format->setOptions([
-            'when' => 'A NOT_EMPTY',
-            'then' => [
-                'correct' => ['AO'],
-            ],
-        ]);
-
-        $this->assertSame(['AO'], $format->apply($item)['correct']);
-    }
 }

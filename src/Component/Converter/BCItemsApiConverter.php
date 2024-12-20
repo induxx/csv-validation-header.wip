@@ -10,10 +10,9 @@ use Misery\Component\Reader\ReaderAwareInterface;
 use Misery\Component\Reader\ReaderAwareTrait;
 
 /**
- * This Converter converts BC product Data to std data with Matcher
- * We focus on correcting without manipulation the data
+ * This Converter converts flat product to std data
+ * We focus on correcting with minimal issues
  * The better the input you give the better the output
- * Besides data values, we also map locales and channels
  */
 class BCItemsApiConverter implements ConverterInterface, ReaderAwareInterface, RegisteredByNameInterface, OptionsInterface
 {
@@ -67,7 +66,7 @@ class BCItemsApiConverter implements ConverterInterface, ReaderAwareInterface, R
         $expand = $this->getOption('expand');
 
         unset($item['@odata.etag']);
-        $tmp['sku'] = $item['no'] ?? $item['number'];
+        $tmp['sku'] = $item['no'];
 
         $this->processCharacteristics(
             $item,
@@ -76,32 +75,40 @@ class BCItemsApiConverter implements ConverterInterface, ReaderAwareInterface, R
             $tmp
         );
 
-        // these mappings, link and match the BC data and convert it to std Data Matcher
-        $mappings = $this->getOption('mappings:list');
-
         foreach ($expand as $expandOption) {
             foreach ($item[$expandOption] ?? [] as $itemProp) {
+                if (in_array($expandOption, ['itemUnitOfMeasuresColli', 'itemUnitOfMeasuresPallet', 'itemUnitOfMeasuresPieces'])) {
+                    $this->processCharacteristics(
+                        $itemProp,
+                        ['length', 'width', 'height', 'weight', 'qtyPerUnitOfMeasure'],
+                        $expandOption,
+                        $tmp
+                    );
+                }
+
+                if ($expandOption === 'itemtranslations') {
+                    $this->processCharacteristics(
+                        $itemProp,
+                        ['itemDescriptionERP', 'typeName'],
+                        $expandOption,
+                        $tmp
+                    );
+                }
+
+                if ($expandOption === 'itemreferences') {
+                    $this->processCharacteristics(
+                        $itemProp,
+                        ['referenceNo'],
+                        $expandOption,
+                        $tmp
+                    );
+                }
 
                 if ($expandOption === 'itemCategories') {
                     $tmp['categories'] = array_map(function ($cat) {
                         return $cat['code'] ?? null;
                     }, $item[$expandOption]);
-                    continue;
                 }
-
-                $bcMappings = $mappings[$expandOption] ?? null;
-                if (!$bcMappings) {
-                    continue;
-                }
-
-                $bcMappingKeys = array_keys($bcMappings);
-
-                $this->processCharacteristics(
-                    $itemProp,
-                    $bcMappingKeys,
-                    $expandOption,
-                    $tmp
-                );
             }
         }
 

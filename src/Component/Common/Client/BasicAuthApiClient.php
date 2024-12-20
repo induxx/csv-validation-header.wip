@@ -42,12 +42,12 @@ class BasicAuthApiClient implements ApiClientInterface
         $authHeader = 'Authorization: Basic ' . base64_encode($this->username . ':' . $this->password);
         $headers[] = $authHeader;
 
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
         if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH') {
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
             $headers[] = 'Content-Type: application/json';
         }
-
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         $this->response = json_decode(curl_exec($curl), true);
         $this->status = \curl_getinfo($curl, CURLINFO_HTTP_CODE);
@@ -69,7 +69,7 @@ class BasicAuthApiClient implements ApiClientInterface
         if (is_string($this->response)) {
             $response = new ApiResponse($this->status, null, $this->response);
         }
-        if (in_array($this->status, [200, 201, 204]) && !$this->response) {
+        if (in_array($this->status, [200, 204]) && !$this->response) {
             $response = ApiResponse::create([], $this->status);
         }
 

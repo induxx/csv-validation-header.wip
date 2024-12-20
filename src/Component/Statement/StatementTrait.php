@@ -56,7 +56,7 @@ trait StatementTrait
         return $this;
     }
 
-    public function then(string $field, $value = null): void
+    public function then(string $field, string $value = null): void
     {
         if (isset($this->conditions[$this->key])) {
             $this->conditions[$this->key]['then'][] = new Field($field, $value);

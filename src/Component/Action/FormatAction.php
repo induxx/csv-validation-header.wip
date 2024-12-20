@@ -21,7 +21,6 @@ class FormatAction implements OptionsInterface
         'index' => null,
         'decimal_sep' => '.',
         'mille_sep' => ',',
-        'multi_value' => true,
     ];
 
     public function apply(array $item): array
@@ -42,7 +41,7 @@ class FormatAction implements OptionsInterface
         if (!isset($item[$field])) {
             return $item;
         }
-        if (is_array($item[$field]) && $this->getOption('multi_value')) {
+        if (is_array($item[$field])) {
             $item[$field] = array_map(function ($value) {
                 return $this->doApply($value);
             }, $item[$field]);
@@ -59,9 +58,7 @@ class FormatAction implements OptionsInterface
         foreach ($this->getOption('functions') as $function) {
             switch ($function) {
                 case 'replace':
-                    if ($this->getOption('search') && $this->getOption('replace') !== null) {
-                        $value = str_replace($this->getOption('search'), $this->getOption('replace'), $value);
-                    }
+                    $value = str_replace($this->getOption('search'), $this->getOption('replace'), $value);
                     break;
                 case 'number':
                     if (is_numeric($value)) {

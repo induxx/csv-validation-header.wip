@@ -5,7 +5,6 @@ namespace Misery\Component\Action;
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Registry\RegisteredByNameInterface;
 use Misery\Component\Common\Registry\RegistryInterface;
-use Misery\Component\Configurator\Configuration;
 use Misery\Component\Configurator\ConfigurationAwareInterface;
 use Misery\Component\Configurator\ConfigurationManager;
 use Misery\Component\Reader\ItemReaderAwareInterface;
@@ -27,14 +26,14 @@ class ItemActionProcessorFactory implements RegisteredByNameInterface
         );
     }
 
-    public function createFromConfiguration(array $configuration, Configuration $config, ?SourceCollection $sources): ItemActionProcessor
+    public function createFromConfiguration(array $configuration, ConfigurationManager $manager, ?SourceCollection $sources): ItemActionProcessor
     {
         return new ItemActionProcessor(
-            $this->prepRulesFromConfiguration($sources, $configuration, $config)
+            $this->prepRulesFromConfiguration($sources, $configuration, $manager)
         );
     }
 
-    private function prepRulesFromConfiguration(?SourceCollection $sources, array $configuration, Configuration $config = null): array
+    private function prepRulesFromConfiguration(?SourceCollection $sources, array $configuration, ConfigurationManager $manager = null): array
     {
         $rules = [];
         foreach ($configuration as $name => $value) {
@@ -45,24 +44,24 @@ class ItemActionProcessorFactory implements RegisteredByNameInterface
 
                 $action = clone $action;
 
-                if ($config && isset($value['filter']) && is_string($value['filter'])) {
-                    $value['filter'] = $config->getFilter($value['filter']);
+                if ($manager && isset($value['filter']) && is_string($value['filter'])) {
+                    $value['filter'] = $manager->getConfig()->getFilter($value['filter']);
                 }
 
                 if ($action instanceof OptionsInterface && !empty($value)) {
-                    if ($config && isset($value['list']) && is_string($value['list'])) {
-                        $value['list'] = $config->getList($value['list']);
+                    if ($manager && isset($value['list']) && is_string($value['list'])) {
+                        $value['list'] = $manager->getConfig()->getList($value['list']);
                     }
 
                     if (isset($value['filter_list'])) {
-                        $value['filter_list'] = $config->getList($value['filter_list']);
+                        $value['filter_list'] = $manager->getConfig()->getList($value['filter_list']);
                     }
 
                     $action->setOptions($value);
                 }
 
-                if ($action instanceof ConfigurationAwareInterface && $config instanceof Configuration) {
-                    $action->setConfiguration($config);
+                if ($action instanceof ConfigurationAwareInterface && $manager instanceof ConfigurationManager) {
+                    $action->setConfiguration($manager->getConfig());
                 }
 
                 if ($action instanceof ItemReaderAwareInterface && isset($value['source'])) {

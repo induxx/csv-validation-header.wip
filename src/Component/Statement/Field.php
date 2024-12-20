@@ -7,7 +7,7 @@ class Field
     private $field;
     private $value;
 
-    public function __construct(string $field, $value = null)
+    public function __construct(string $field, string $value = null)
     {
         $this->field = str_replace(['{','}'], '', $field); # for legacy reasons we can't replace this value here yet
         $this->value = $value;
@@ -25,7 +25,7 @@ class Field
         return $this->field;
     }
 
-    public function getValue()
+    public function getValue(): ? string
     {
         return $this->value;
     }

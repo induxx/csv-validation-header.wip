@@ -27,9 +27,9 @@ class ConcatAction implements OptionsInterface
             return $item;
         }
 
-        // don't check if array_key_exist here, concat should always work, if the field doesn't exist
-        // somewhat the point to form a new field from concatination
-        $item[$field] = ValueFormatter::format($this->getOption('format'), $item);
+        if (array_key_exists($field, $item)) {
+            $item[$field] = ValueFormatter::format($this->getOption('format'), $item);
+        }
 
         return $item;
     }

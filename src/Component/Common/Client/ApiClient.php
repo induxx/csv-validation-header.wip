@@ -202,16 +202,15 @@ class ApiClient implements ApiClientInterface
         // obtain response
         $content = \curl_exec($this->handle);
         $status = \curl_getinfo($this->handle, CURLINFO_HTTP_CODE);
+        if (in_array($status, [200, 204]) && !$content) {
+            return ApiResponse::create([], $status);
+        }
 
         // extract body
         $headerSize = curl_getinfo($this->handle, CURLINFO_HEADER_SIZE);
         $headers = substr($content, 0, $headerSize);
         $content = substr($content, $headerSize);
         $headers = $this->getResponseHeaders($headers);
-
-        if (in_array($status, [200, 204]) && !$content) {
-            return ApiResponse::create([], $status);
-        }
 
         $multi = [];
         foreach (explode("\n", $content) as $c) {

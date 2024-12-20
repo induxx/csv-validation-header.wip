@@ -28,7 +28,6 @@ use Misery\Component\Feed\FeedInterface;
 use Misery\Component\Mapping\MappingFactory;
 use Misery\Component\Parser\ItemParserFactory;
 use Misery\Component\Process\ProcessManager;
-use Misery\Component\Project\ProjectDirectories;
 use Misery\Component\Reader\ItemCollection;
 use Misery\Component\Reader\ItemReader;
 use Misery\Component\Reader\ItemReaderFactory;
@@ -123,8 +122,6 @@ class ConfigurationManager
 
     public function addTransformationSteps(array $transformationSteps, array $masterConfiguration): void
     {
-        /** @var ProjectDirectories $projectDirectories */
-        $projectDirectories = $this->factory->getFactory('project_directories');
         $debug = $this->config->getContext('debug');
         $dirName = pathinfo($this->config->getContext('transformation_file'))['dirname'] ?? null;
 
@@ -162,11 +159,7 @@ class ConfigurationManager
             }
 
             $file = $dirName . DIRECTORY_SEPARATOR . $transformationFile;
-            if (!is_file($file) && $projectDirectories->getTemplatePath()->isFile($transformationFile)) {
-                $file = $projectDirectories->getTemplatePath()->getAbsolutePath($transformationFile);
-            } else {
-                Assertion::file($file);
-            }
+            Assertion::file($file);
 
             // we need to start a new configuration manager.
             $transformationFile = ArrayFunctions::array_filter_recursive(Yaml::parseFile($file), function ($value) {
@@ -237,10 +230,9 @@ class ConfigurationManager
     {
         /** @var ItemActionProcessorFactory $factory */
         $factory = $this->factory->getFactory('action');
-        $actions = $factory->createFromConfiguration($configuration, $this->config, $this->sources);
+        $actions = $factory->createFromConfiguration($configuration, $this, $this->sources);
 
         $this->config->setActions($actions);
-        $this->config->setActionFactory($factory);
 
         return $actions;
     }

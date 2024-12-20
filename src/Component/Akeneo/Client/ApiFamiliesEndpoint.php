@@ -8,7 +8,7 @@ class ApiFamiliesEndpoint implements ApiEndpointInterface
 {
     public const NAME = 'families';
     private const ALL = 'families';
-    private const ONE = 'families/%code%';
+    private const ONE = 'families/%s';
 
     public function getAll(): string
     {

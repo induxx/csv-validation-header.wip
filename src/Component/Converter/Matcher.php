@@ -49,7 +49,12 @@ class Matcher
 
     public function getPrimaryKey(): string
     {
-        return $this->matches[1];
+        return $this->matches[1] ?? $this->matches[0];
+    }
+
+    public function isProperty(): bool
+    {
+        return count($this->matches) === 1;
     }
 
     public function getRowKey(): string
@@ -64,7 +69,7 @@ class Matcher
 
     public function matches(string $match): bool
     {
-        return in_array($match, $this->matches);
+        return in_array($match, $this->matches) || $match === $this->getMainKey();
     }
 
     public function duplicateWithNewKey(string $newPrimaryKey): self
@@ -72,8 +77,7 @@ class Matcher
         $matcher = new self();
         $matcher->scope = $this->scope;
         $matcher->locale = $this->locale;
-        $matcher->matches = $this->matches;
-        $matcher->matches[1] = $newPrimaryKey;
+        $matcher->matches = explode($this->separator, $newPrimaryKey);
 
         return $matcher;
     }

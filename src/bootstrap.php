@@ -145,7 +145,6 @@ $actionRegistry
     ->register(\Misery\Component\Action\DateTimeAction::NAME, new Misery\Component\Action\DateTimeAction())
     ->register(Misery\Component\Action\FrameAction::NAME, new Misery\Component\Action\FrameAction())
     ->register(Misery\Component\Action\GroupAction::NAME, new Misery\Component\Action\GroupAction())
-    ->register(\Misery\Component\Action\StoreAction::NAME, new Misery\Component\Action\StoreAction())
 ;
 
 #$statementRegistry = new Misery\Component\Common\Registry\Registry('statement');
@@ -189,10 +188,6 @@ $factoryRegistry->registerAllByName(
     new Misery\Component\Source\SourceCollectionFactory(),
     new Misery\Component\Common\Pipeline\PipelineFactory(),
     new Misery\Component\BluePrint\BluePrintFactory(__DIR__.'/../config/blueprint'),
-    new Misery\Component\Project\ProjectDirectories(
-        __DIR__.'/../config/blueprint',
-        __DIR__.'/../config/template',
-    ),
     new Misery\Component\Statement\StatementFactory(),
     new Misery\Component\Reader\ItemReaderFactory(),
     new Misery\Component\Parser\ItemParserFactory(),

@@ -8,12 +8,17 @@ namespace Misery\Component\Mapping;
  */
 class ColumnMapper implements Mapper
 {
+    public function __construct(private readonly bool $strictMode = true) {}
+
     public function map(array $item, array $mappings)
     {
-        if (count(array_diff(array_keys($mappings), array_keys($item))) == count(array_keys($mappings))) {
+        // Check for missing mapped items
+        $missingMappings = array_diff(array_keys($mappings), array_keys($item));
+
+        if ($this->strictMode && !empty($missingMappings)) {
             throw new \InvalidArgumentException(sprintf(
-                'No mapped items %s are not found in item.',
-                json_encode($mappings)
+                'The following mapped items are not found in item: %s',
+                json_encode($missingMappings)
             ));
         }
 

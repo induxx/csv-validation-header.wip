@@ -2,8 +2,6 @@
 
 namespace Misery\Component\Configurator;
 
-use App\Component\ChangeManager\ChangeManager;
-use Misery\Component\Action\ItemActionProcessorFactory;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Misery\Component\Action\ItemActionProcessor;
@@ -35,7 +33,6 @@ class Configuration
     private $decoders;
     private $reader;
     private $writer;
-    /** @var ArrayCollection[]  $lists */
     private $lists = [];
     private $mappings = [];
     private $filters = [];
@@ -47,8 +44,6 @@ class Configuration
     /** @var ApiClient[] */
     private $accounts;
     private $isMultiStep = false;
-    public ChangeManager $changeManager;
-    public ItemActionProcessorFactory $actionFactory;
 
     private array $extensions = [];
 
@@ -146,16 +141,6 @@ class Configuration
         $this->actions = $actionProcessor;
     }
 
-    public function setActionFactory(ItemActionProcessorFactory $factory): void
-    {
-        $this->actionFactory = $factory;
-    }
-
-    public function generateActionProcessor(array $actions): ItemActionProcessor
-    {
-        return $this->actionFactory->createFromConfiguration($actions, $this, $this->sources);
-    }
-
     public function setGroupedActions(string $name, ItemActionProcessor $actionProcessor): void
     {
         $this->groupedActions[$name] = $actionProcessor;
@@ -195,27 +180,7 @@ class Configuration
 
     public function addLists(array $lists): void
     {
-        foreach ($lists as $listName => $list) {
-            $this->addList($listName, $list);
-        }
-    }
-
-    public function addList(string $listName, array $list): void
-    {
-        $this->lists[$listName] = new ArrayCollection($list);
-    }
-
-    public function updateList(string $listName, array $list): void
-    {
-        /** @var ArrayCollection $currentList */
-        $currentList = $this->getListObject($listName);
-        if ($currentList === null) {
-            $this->addList($listName, $list);
-            return;
-        }
-
-        $currentList->purge();
-        $currentList->addValues($list);
+        $this->lists = array_merge($this->lists, $lists);
     }
 
     public function getLists(): array
@@ -223,13 +188,9 @@ class Configuration
         return $this->lists;
     }
 
-    public function getList(string $alias): ?array
+    public function getList(string $alias)
     {
-        if (!isset($this->lists[$alias])) {
-            return null;
-        }
-
-        return $this->lists[$alias]->getValues();
+        return $this->lists[$alias] ?? null;
     }
 
     public function addFilters(array $filters): void
@@ -357,10 +318,5 @@ class Configuration
         $this->encoders = new ArrayCollection();
         $this->decoders = new ArrayCollection();
         $this->blueprints = new ArrayCollection();
-    }
-
-    private function getListObject(string $alias): ?ArrayCollection
-    {
-        return $this->lists[$alias] ?? null;
     }
 }

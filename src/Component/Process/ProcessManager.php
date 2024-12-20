@@ -9,7 +9,7 @@ use Psr\Log\LoggerInterface;
 class ProcessManager
 {
     private Configuration $configuration;
-    private int $startTimeStamp = 0;
+    private ?int $startTimeStamp = null;
     private ?int $invalidItems = 0;
     private LoggerInterface $logger;
 
@@ -21,7 +21,7 @@ class ProcessManager
 
     public function startProcess(): void
     {
-        $this->startTimeStamp = (int) microtime(true);
+        $this->startTimeStamp = microtime(true);
         $this->logger->info(sprintf("Running Step :: %s ", basename($this->configuration->getContext('transformation_file'))));
 
         $debug = $this->configuration->getContext('debug');

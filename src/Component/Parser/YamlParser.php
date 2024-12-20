@@ -36,17 +36,17 @@ class YamlParser implements CursorInterface
          return $this->cursor;
     }
 
-    public function current(): mixed
+    public function current()
     {
         return $this->getCursor()->current();
     }
 
-    public function next(): void
+    public function next()
     {
         $this->cursor->next();
     }
 
-    public function key(): mixed
+    public function key()
     {
         return $this->cursor->key();
     }

@@ -73,35 +73,6 @@ class FormatActionTest extends TestCase
         $this->assertEquals(['field' => ''], $result);
     }
 
-    public function testEmptyReplaceFormatFunction()
-    {
-        $item = ['field' => 'A|,B|,C|,D'];
-
-        $action = new FormatAction();
-        $action->setOptions([
-            'field' => 'field',
-            'functions' => ['replace'],
-            'search' => '|,',
-            'replace' => '',
-        ]);
-
-        $result = $action->apply($item);
-
-        $this->assertEquals(['field' => 'ABCD'], $result);
-
-        $action = new FormatAction();
-        $action->setOptions([
-            'field' => 'field',
-            'functions' => ['replace'],
-            'search' => '',
-            'replace' => null,
-        ]);
-
-        $result = $action->apply($item);
-
-        $this->assertEquals(['field' => 'A|,B|,C|,D'], $result);
-    }
-
     public function testApplyPrefixFunction()
     {
         $item = ['field' => '12345'];
@@ -176,23 +147,6 @@ class FormatActionTest extends TestCase
             'functions' => ['explode', 'select_index'],
             'index' => 0,
             'separator' => ',',
-        ]);
-
-        $result = $action->apply($item);
-
-        $this->assertEquals(['field' => 'A'], $result);
-    }
-
-    public function testApplySelectIndexNoMultiValFunction()
-    {
-        $item = ['field' => ['A']];
-
-        $action = new FormatAction();
-        $action->setOptions([
-            'field' => 'field',
-            'functions' => ['select_index'],
-            'index' => 0,
-            'multi_value' => false,
         ]);
 
         $result = $action->apply($item);

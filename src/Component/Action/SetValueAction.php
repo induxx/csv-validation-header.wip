@@ -17,17 +17,19 @@ class SetValueAction implements ActionInterface, OptionsInterface
         'key' => null,
         'field' => null,
         'value' => null,
+        'allow_creation' => false,
     ];
 
     public function apply(array $item): array
     {
+        $allowCreation = $this->getOption('allow_creation');
         $field = $this->getOption('field', $this->getOption('key'));
         $value = $this->getOption('value');
 
-        $key = $this->findMatchedValueData($item, $field);
-        if ($key) {
-            $item[$key]['data'] = $value;
+        $field = $this->findMatchedValueData($item, $field) ?? $field;
 
+        if ($allowCreation) {
+            $item[$field] = $value;
             return $item;
         }
 

@@ -9,7 +9,7 @@ class ApiAttributesEndpoint implements ApiEndpointInterface
     public const NAME = 'attributes';
 
     private const ALL = 'attributes';
-    private const ONE = 'attributes/%code%';
+    private const ONE = 'attributes/%s';
 
     public function getAll(): string
     {

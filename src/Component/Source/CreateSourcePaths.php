@@ -14,7 +14,7 @@ class CreateSourcePaths
             if (is_file($file = sprintf($sourcePath, $source))) {
                 $tmp['source'] = $file;
             }
-            if ($bluePrintPath && is_file($file = sprintf($bluePrintPath, $source))) {
+            if (is_file($file = sprintf($bluePrintPath, $source))) {
                 $tmp['blueprint'] = Yaml::parseFile($file);
             }
             $references[$source] = $tmp;

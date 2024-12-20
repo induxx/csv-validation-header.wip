@@ -22,7 +22,7 @@ class ItemParserFactory implements RegisteredByNameInterface
         Assert::that(
             $type,
             'type must be filled in.'
-        )->notEmpty()->string()->inArray(['xml', 'csv', 'xlsx', 'list', 'feed', 'yaml', 'buffer', 'json', 'jsonl']);
+        )->notEmpty()->string()->inArray(['xml', 'csv', 'xlsx', 'list', 'feed', 'yaml', 'buffer', 'json']);
 
         $fetchers = [
             'continuous' => ContinuousBufferFetcher::class,
@@ -58,7 +58,7 @@ class ItemParserFactory implements RegisteredByNameInterface
             return $mainParser;
         }
 
-        if ($type === 'json' || $type === 'buffer' || $type === 'jsonl') {
+        if ($type === 'json' || $type === 'buffer') {
             return JsonFileParser::create(
                 $manager->getFile($configuration['filename'])
             );

@@ -19,7 +19,7 @@ abstract class FileParser implements CursorInterface
         if ($file->isFile()) {
             $this->file = $file;
 
-            #ini_set('auto_detect_line_endings', '1');
+            ini_set('auto_detect_line_endings', '1');
         }
     }
 
@@ -52,7 +52,7 @@ abstract class FileParser implements CursorInterface
      *
      * @return false|string
      */
-    public function current(): mixed
+    public function current()
     {
         return $this->file->current();
     }
@@ -68,7 +68,7 @@ abstract class FileParser implements CursorInterface
     /**
      * {@inheritDoc}
      */
-    public function key(): mixed
+    public function key()
     {
         return $this->file->key();
     }

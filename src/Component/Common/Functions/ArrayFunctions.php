@@ -61,7 +61,6 @@ class ArrayFunctions
             // If the key is an integer and preserveIntKeys is true, do not flatten this part of the array
             if ($preserveIntKeys && is_int($key)) {
                 $result[rtrim($prefix, $separator)][$key] = $value;
-                //continue; // Skip the rest of the logic for this key
             }
 
             if (is_array($value) && $value !== []) {

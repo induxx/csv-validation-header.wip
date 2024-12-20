@@ -86,21 +86,4 @@ class CalculateActionTest extends TestCase
 
         $this->assertEquals(['field1' => 'text', 'field2' => 'invalid'], $result);
     }
-
-    public function testApplyWithStringFieldsAndNegativeResult()
-    {
-        $item = ['INNERBOX_QUANTITY_CALCULATION' => '1', 'GIFTBOX_QUANTITY_CALCULATION' => '33'];
-
-        $action = new CalculateAction();
-        $action->setOptions([
-            'fields' => ['INNERBOX_QUANTITY_CALCULATION', 'GIFTBOX_QUANTITY_CALCULATION'],
-            'operator' => 'SUBTRACT',
-            'result' => 'INNERBOX=GIFTBOX_CALCULATION'
-        ]);
-
-        $result = $action->apply($item);
-
-        $item['INNERBOX=GIFTBOX_CALCULATION'] = '-32';
-        $this->assertEquals($item, $result);
-    }
 }

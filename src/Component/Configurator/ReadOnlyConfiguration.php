@@ -44,14 +44,7 @@ class ReadOnlyConfiguration
 
     public function getLists(): array
     {
-        return array_map(function ($list) {
-            return $list->getValues();
-        }, $this->lists);
-    }
-
-    public function getList(string $alias)
-    {
-        return $this->lists[$alias]?->getValues();
+        return $this->lists;
     }
 
     public function getFilter(string $alias)

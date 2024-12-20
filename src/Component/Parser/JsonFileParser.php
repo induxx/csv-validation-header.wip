@@ -12,7 +12,7 @@ class JsonFileParser extends FileParser
     /**
      * @return false|array
      */
-    public function current(): mixed
+    public function current()
     {
         if ($item = parent::current()) {
             $item = \json_decode(str_replace(PHP_EOL, '', $item), true);

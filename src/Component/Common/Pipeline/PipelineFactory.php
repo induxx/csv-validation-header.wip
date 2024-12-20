@@ -37,7 +37,6 @@ class PipelineFactory implements RegisteredByNameInterface
                         $pipeline->output(new PipeWriter(
                             $configurationManager->createBufferWriter($configuration['output']['http']['buffer_file'])
                         ));
-                        break;
                     }
 
                     $pipeline->output(new PipeWriter($writer));
