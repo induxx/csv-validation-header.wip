@@ -77,7 +77,14 @@ class Matcher
         $matcher = new self();
         $matcher->scope = $this->scope;
         $matcher->locale = $this->locale;
-        $matcher->matches = explode($this->separator, $newPrimaryKey);
+        $matcher->matches = $this->matches;
+        $matcher->matches[1] = $newPrimaryKey;
+        if (count(explode($this->separator, $newPrimaryKey)) > 1) {
+            $matcher->matches = explode($this->separator, $newPrimaryKey);
+        }
+
+        // obelink-xml-v3
+        //$matcher->matches = explode($this->separator, $newPrimaryKey);
 
         return $matcher;
     }
