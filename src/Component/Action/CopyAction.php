@@ -7,7 +7,7 @@ use Misery\Component\Common\Options\OptionsTrait;
 use Misery\Component\Converter\Matcher;
 use Misery\Model\DataStructure\ItemInterface;
 
-class CopyAction implements ActionInterface, OptionsInterface
+class CopyAction implements OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -19,13 +19,16 @@ class CopyAction implements ActionInterface, OptionsInterface
         'to' => null,
     ];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         $from = $this->getOption('from');
         $to = $this->getOption('to');
-        $item->copyItem($from, $to);
 
-        return $item;
+        if (null === $from || null === $to) {
+            return;
+        }
+
+        $item->copyItem($from, $to);
     }
 
     public function apply(array $item): array

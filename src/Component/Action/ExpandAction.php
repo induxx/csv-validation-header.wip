@@ -18,18 +18,16 @@ class ExpandAction implements OptionsInterface, ActionItemInterface
         'list' => null,
     ];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         $list = $this->getOption('set', $this->getOption('list', []));
         if (empty($list)) {
-            return $item;
+            return;
         }
 
         foreach ($list as $itemCode => $itemValue) {
             $item->addItem($itemCode, $itemValue);
         }
-
-        return $item;
     }
 
     public function apply(array $item): array

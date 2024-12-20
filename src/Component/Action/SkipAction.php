@@ -7,7 +7,7 @@ use Misery\Component\Common\Options\OptionsTrait;
 use Misery\Component\Common\Pipeline\Exception\SkipPipeLineException;
 use Misery\Model\DataStructure\ItemInterface;
 
-class SkipAction implements OptionsInterface, ActionInterface
+class SkipAction implements OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -21,14 +21,12 @@ class SkipAction implements OptionsInterface, ActionInterface
     ];
     private array $values = [];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         $field = $this->getOption('field');
         $dateValue = $item->getItem($field)?->getDataValue();
 
         $this->apply([$field => $dateValue]);
-
-        return $item;
     }
 
     public function apply(array $item): array

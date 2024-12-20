@@ -6,7 +6,7 @@ use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
 use Misery\Model\DataStructure\ItemInterface;
 
-class ListMapperAction implements ActionInterface, OptionsInterface, ActionItemInterface
+class ListMapperAction implements OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -19,14 +19,14 @@ class ListMapperAction implements ActionInterface, OptionsInterface, ActionItemI
         'list' => [],
     ];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         if ([] === $this->getOption('list')) {
-            return $item;
+            return;
         }
 
         if (null === $this->getOption('field')) {
-            return $item;
+            return;
         }
         $field = $this->getOption('field');
         $storeField = $this->getOption('store_field');
@@ -41,8 +41,6 @@ class ListMapperAction implements ActionInterface, OptionsInterface, ActionItemI
                 $item->editItemValue($field, $newValue);
             }
         }
-
-        return $item;
     }
 
     public function apply(array $item): array

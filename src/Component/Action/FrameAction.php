@@ -18,11 +18,11 @@ class FrameAction implements OptionsInterface, ActionItemInterface
         'list' => [],
     ];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         $fields = $this->getOption('fields', $this->getOption('list'));
         if (empty($fields)) {
-            return $item;
+            return;
         }
 
         // lets generate a multi-dimensional array
@@ -30,8 +30,6 @@ class FrameAction implements OptionsInterface, ActionItemInterface
             $fields = array_fill_keys($fields, null);
         }
         $item->reFrame($fields);
-
-        return $item;
     }
 
     public function apply(array $item): array

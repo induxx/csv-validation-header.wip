@@ -28,7 +28,7 @@ class KeyMapperAction implements OptionsInterface, ActionItemInterface
         'reverse' => false,
     ];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         $reverse = $this->getOption('reverse');
         $list = array_filter($this->getOption('list'));
@@ -44,7 +44,7 @@ class KeyMapperAction implements OptionsInterface, ActionItemInterface
             foreach ($keys as $keyToUnset) {
                 $item->removeItem($keyToUnset);
             }
-            return $item;
+            return;
         }
 
         foreach ($list as $match => $replacer) {
@@ -52,8 +52,6 @@ class KeyMapperAction implements OptionsInterface, ActionItemInterface
                 $item->moveItem($match, $replacer);
             }
         }
-
-        return $item;
     }
 
     public function apply(array $item): array

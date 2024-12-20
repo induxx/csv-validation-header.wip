@@ -2,7 +2,6 @@
 
 namespace Misery\Component\Action;
 
-use JetBrains\PhpStorm\NoReturn;
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
 use Misery\Model\DataStructure\ItemInterface;
@@ -19,7 +18,7 @@ class DebugAction implements OptionsInterface, ActionInterface, ActionItemInterf
         'until_field' => null,
     ];
 
-    #[NoReturn] public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         dd($item);
     }

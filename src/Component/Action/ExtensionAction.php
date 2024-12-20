@@ -23,19 +23,22 @@ class ExtensionAction implements OptionsInterface, ConfigurationAwareInterface, 
         'extension' => null,
     ];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         $extension = $this->getOption('extension');
         if (null === $extension) {
-            return $item;
+            return;
         }
+
         // loadExtension
         if (null === $this->extension) {
             $extensionFile = $this->configuration->getExtensions()[$extension.'.php'] ?? null;
             $this->extension = $this->loadExtension($extensionFile, 'Extensions\\'.$extension);
         }
 
-        return $this->extension->applyAsItem($item);
+        if (method_exists($this->extension, 'applyAsItem')) {
+            $this->extension->applyAsItem($item);
+        }
     }
 
     public function apply($item): array

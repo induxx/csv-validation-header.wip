@@ -7,7 +7,7 @@ use Misery\Component\Common\Options\OptionsTrait;
 use Misery\Component\Mapping\ColumnMapper;
 use Misery\Model\DataStructure\ItemInterface;
 
-class RenameAction implements OptionsInterface
+class RenameAction implements OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -20,23 +20,25 @@ class RenameAction implements OptionsInterface
         $this->mapper = new ColumnMapper();
     }
 
-    /** @var array */
-    private $options = [
+    private array $options = [
         'from' => null,
         'to' => null,
         'suffix' => null,
         'exclude_list' => [],
         'filter_list' => null,
         'fields' => [],
+        'strict_mode' => true,
     ];
 
-    public function applyAsItem(ItemInterface $item): ItemInterface
+    public function applyAsItem(ItemInterface $item): void
     {
         $from = $this->getOption('from');
         $to = $this->getOption('to');
-        $item->moveItem($from, $to);
+        if (!$from || !$to) {
+            return;
+        }
 
-        return $item;
+        $item->moveItem($from, $to);
     }
 
     public function apply(array $item): array
