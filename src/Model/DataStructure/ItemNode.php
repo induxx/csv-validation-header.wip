@@ -5,7 +5,7 @@ namespace Misery\Model\DataStructure;
 use Misery\Component\Akeneo\DataStructure\AkeneoScope;
 use Misery\Component\Converter\Matcher;
 
-class ItemNode
+class ItemNode implements ItemNodeInterface
 {
     private Matcher $matcher;
     private string $type = 'generic';

@@ -10,11 +10,16 @@ use Assert\Assert;
  */
 class Item implements ItemInterface
 {
-    public function __construct(private array $itemNodes = [])
+    public function __construct(private readonly string $class, private array $itemNodes = [])
     {
         foreach ($this->itemNodes as $node) {
             Assert::that($node)->isInstanceOf(ItemNode::class);
         }
+    }
+
+    public function getClass(): string
+    {
+        return $this->class;
     }
 
     public function addItem(string $code, mixed $itemValue, array $context = []): void
@@ -30,6 +35,9 @@ class Item implements ItemInterface
         }
 
         $itemValue = $item->getValue();
+        if (null === $itemValue) {
+            return;
+        }
 
         // Property Values
         if (is_string($itemValue)) {
@@ -42,7 +50,7 @@ class Item implements ItemInterface
         $itemValue['type'] = $item->getType();
         $itemValue['matcher'] = $matcher;
 
-        $this->addItem($toCode, $itemValue, $item->getContext());
+        $this->addItem($matcher->getPrimaryKey(), $itemValue, $item->getContext());
     }
 
     public function reFrame(array $orderedFields, bool $appendRemaining = false): void

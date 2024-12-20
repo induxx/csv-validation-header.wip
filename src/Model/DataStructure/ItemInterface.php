@@ -79,6 +79,11 @@ interface ItemInterface
     public function getItemNodes(): array;
 
     /**
+     * Retrieves only the codes
+     * @return array
+     */
+    public function getItemCodes(): array;
+    /**
      * Finds an item matching the given criteria.
      *
      * @param string $match The criteria to match against.
