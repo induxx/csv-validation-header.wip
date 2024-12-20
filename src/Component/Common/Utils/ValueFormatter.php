@@ -25,6 +25,12 @@ class ValueFormatter
         return strtr($format, $replacements);
     }
 
+    public static function getKeys(string $format): array
+    {
+        preg_match_all('/%([a-zA-Z0-9_]+)%/', $format, $matches);
+        return $matches[1] ?? [];
+    }
+
     public static function recursiveFormat(string $format, array $values): string
     {
         foreach ($values as $value) {
