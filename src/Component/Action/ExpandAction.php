@@ -4,8 +4,9 @@ namespace Misery\Component\Action;
 
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
+use Misery\Model\DataStructure\ItemInterface;
 
-class ExpandAction implements OptionsInterface
+class ExpandAction implements OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -16,6 +17,20 @@ class ExpandAction implements OptionsInterface
         'set' => null,
         'list' => null,
     ];
+
+    public function applyAsItem(ItemInterface $item): ItemInterface
+    {
+        $list = $this->getOption('set', $this->getOption('list', []));
+        if (empty($list)) {
+            return $item;
+        }
+
+        foreach ($list as $itemCode => $itemValue) {
+            $item->addItem($itemCode, $itemValue);
+        }
+
+        return $item;
+    }
 
     public function apply(array $item): array
     {

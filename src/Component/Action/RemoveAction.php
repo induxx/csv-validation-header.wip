@@ -4,8 +4,9 @@ namespace Misery\Component\Action;
 
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
+use Misery\Model\DataStructure\ItemInterface;
 
-class RemoveAction implements ActionInterface, OptionsInterface
+class RemoveAction implements ActionInterface, OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -16,6 +17,16 @@ class RemoveAction implements ActionInterface, OptionsInterface
         'keys' => [],
         'fields' => [],
     ];
+
+    public function applyAsItem(ItemInterface $item): ItemInterface
+    {
+        $fields = $this->getOption('keys', $this->getOption('fields'));
+        foreach ($fields as $field) {
+            $item->removeItem($field);
+        }
+
+        return $item;
+    }
 
     public function apply(array $item): array
     {

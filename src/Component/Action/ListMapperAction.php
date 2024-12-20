@@ -4,8 +4,9 @@ namespace Misery\Component\Action;
 
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
+use Misery\Model\DataStructure\ItemInterface;
 
-class ListMapperAction implements ActionInterface, OptionsInterface
+class ListMapperAction implements ActionInterface, OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -17,6 +18,32 @@ class ListMapperAction implements ActionInterface, OptionsInterface
         'store_field' => null,
         'list' => [],
     ];
+
+    public function applyAsItem(ItemInterface $item): ItemInterface
+    {
+        if ([] === $this->getOption('list')) {
+            return $item;
+        }
+
+        if (null === $this->getOption('field')) {
+            return $item;
+        }
+        $field = $this->getOption('field');
+        $storeField = $this->getOption('store_field');
+
+        $itemNode = $item->getItem($field);
+        $dataValue = $itemNode?->getDataValue();
+        if ($dataValue && array_key_exists($dataValue, $this->getOption('list'))) {
+            $newValue = $this->options['list'][$dataValue];
+            if ($storeField) {
+                $item->copyItem($storeField, $newValue);
+            } else {
+                $item->editItemValue($field, $newValue);
+            }
+        }
+
+        return $item;
+    }
 
     public function apply(array $item): array
     {
