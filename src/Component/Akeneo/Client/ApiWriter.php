@@ -2,6 +2,7 @@
 
 namespace Misery\Component\Akeneo\Client;
 
+use Misery\Component\Akeneo\Client\Errors\AkeneoErrorFactory;
 use Misery\Component\Common\Client\ApiClientInterface;
 use Misery\Component\Common\Client\ApiEndpointInterface;
 use Misery\Component\Common\Client\ApiResponse;
@@ -83,8 +84,15 @@ class ApiWriter implements ItemWriterInterface
             $response = $this->execute($data);
         }
 
-        if (!in_array($response->getCode(),  [200, 201, 204])) {
-            throw new InvalidItemException('API exception', ['message' => $response->getContent()], $data);
+        if (!in_array($response->getCode(), [200, 204])) {
+            throw new InvalidItemException(
+                'API exception',
+                [
+                    'message' => $response->getContent(),
+                    'errors' => AkeneoErrorFactory::createErrors($response->getContent())
+                ],
+                $data
+            );
         }
 
         if ($this->method === 'DELETE') {

@@ -13,7 +13,7 @@ class RemoveAction implements ActionInterface, OptionsInterface
 
     /** @var array */
     private $options = [
-        'keys' => [],
+        'keys' => null,
         'fields' => [],
     ];
 
