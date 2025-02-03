@@ -6,8 +6,9 @@ use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
 use Misery\Component\Converter\Matcher;
 use Misery\Component\Mapping\ColumnMapper;
+use Misery\Model\DataStructure\ItemInterface;
 
-class KeyMapperAction implements OptionsInterface
+class KeyMapperAction implements OptionsInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -26,6 +27,32 @@ class KeyMapperAction implements OptionsInterface
         'list' => [],
         'reverse' => false,
     ];
+
+    public function applyAsItem(ItemInterface $item): void
+    {
+        $reverse = $this->getOption('reverse');
+        $list = array_filter($this->getOption('list'));
+
+        if ($reverse) {
+            $keys = [];
+            foreach ($list as $match => $replacer) {
+                if ($item->hasItem($replacer)) {
+                    $item->copyItem($replacer, $match);
+                    $keys[] = $replacer;
+                }
+            }
+            foreach ($keys as $keyToUnset) {
+                $item->removeItem($keyToUnset);
+            }
+            return;
+        }
+
+        foreach ($list as $match => $replacer) {
+            if ($item->hasItem($match)) {
+                $item->moveItem($match, $replacer);
+            }
+        }
+    }
 
     public function apply(array $item): array
     {

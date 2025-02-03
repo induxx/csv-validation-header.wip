@@ -4,6 +4,7 @@ namespace Misery\Component\Action;
 
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
+use Misery\Model\DataStructure\ItemInterface;
 
 class RetainAction implements OptionsInterface
 {
@@ -33,6 +34,21 @@ class RetainAction implements OptionsInterface
         }
 
         return $tmp;
+    }
+
+    public function applyAsItem(ItemInterface $item): ItemInterface
+    {
+        $fields = $this->getOption('keys', $this->getOption('fields'));
+        if (empty($fields)) {
+            return $item;
+        }
+
+        $itemCodesToRemove = array_diff($item->getItemCodes(), $fields);
+        foreach ($itemCodesToRemove as $itemCode) {
+            $item->removeItem($itemCode);
+        }
+
+        return $item;
     }
 
     /**

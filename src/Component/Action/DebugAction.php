@@ -4,8 +4,9 @@ namespace Misery\Component\Action;
 
 use Misery\Component\Common\Options\OptionsInterface;
 use Misery\Component\Common\Options\OptionsTrait;
+use Misery\Model\DataStructure\ItemInterface;
 
-class DebugAction implements OptionsInterface, ActionInterface
+class DebugAction implements OptionsInterface, ActionInterface, ActionItemInterface
 {
     use OptionsTrait;
 
@@ -16,6 +17,11 @@ class DebugAction implements OptionsInterface, ActionInterface
         'field' => null,
         'until_field' => null,
     ];
+
+    public function applyAsItem(ItemInterface $item): void
+    {
+        dd($item);
+    }
 
     public function apply(array $item): array
     {

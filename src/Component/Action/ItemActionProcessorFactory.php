@@ -7,18 +7,12 @@ use Misery\Component\Common\Registry\RegisteredByNameInterface;
 use Misery\Component\Common\Registry\RegistryInterface;
 use Misery\Component\Configurator\Configuration;
 use Misery\Component\Configurator\ConfigurationAwareInterface;
-use Misery\Component\Configurator\ConfigurationManager;
 use Misery\Component\Reader\ItemReaderAwareInterface;
 use Misery\Component\Source\SourceCollection;
 
 class ItemActionProcessorFactory implements RegisteredByNameInterface
 {
-    private $registry;
-
-    public function __construct(RegistryInterface $registry)
-    {
-        $this->registry = $registry;
-    }
+    public function __construct(private readonly RegistryInterface $registry) {}
 
     public function createActionProcessor(SourceCollection $sources, array $configuration): ItemActionProcessor
     {

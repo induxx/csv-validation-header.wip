@@ -8,8 +8,9 @@ use Misery\Component\Configurator\ConfigurationAwareInterface;
 use Misery\Component\Configurator\ConfigurationTrait;
 use Misery\Component\Configurator\ReadOnlyConfiguration;
 use Misery\Component\Extension\ExtensionInterface;
+use Misery\Model\DataStructure\ItemInterface;
 
-class ExtensionAction implements OptionsInterface, ConfigurationAwareInterface
+class ExtensionAction implements OptionsInterface, ConfigurationAwareInterface, ActionItemInterface
 {
     use OptionsTrait;
     use ConfigurationTrait;
@@ -21,6 +22,24 @@ class ExtensionAction implements OptionsInterface, ConfigurationAwareInterface
     private $options = [
         'extension' => null,
     ];
+
+    public function applyAsItem(ItemInterface $item): void
+    {
+        $extension = $this->getOption('extension');
+        if (null === $extension) {
+            return;
+        }
+
+        // loadExtension
+        if (null === $this->extension) {
+            $extensionFile = $this->configuration->getExtensions()[$extension.'.php'] ?? null;
+            $this->extension = $this->loadExtension($extensionFile, 'Extensions\\'.$extension);
+        }
+
+        if (method_exists($this->extension, 'applyAsItem')) {
+            $this->extension->applyAsItem($item);
+        }
+    }
 
     public function apply($item): array
     {
