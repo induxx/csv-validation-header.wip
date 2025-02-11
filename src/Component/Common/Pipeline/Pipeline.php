@@ -58,6 +58,24 @@ class Pipeline
         $this->run($amount, $lineNumber);
     }
 
+    private function handleException(InvalidItemException $exception, int $lineNumber): void
+    {
+        if ($exception->hasErrors()) {
+            foreach ($exception->getErrors()->getErrorMessages() as $errorMessage) {
+                $this->logger->warning(sprintf('WARNING: %s', $errorMessage));
+            }
+        }
+        $this->invalid->write([
+            'line' => $lineNumber,
+            'msg' => $exception->getMessage(),
+            'item' => json_encode($exception->getInvalidItem()),
+        ]);
+
+        // WE need a silent LOGGER here
+        //$this->logger->error($exception->getMessage());
+        //$this->logger->error($exception->getMessage(), $exception->getInvalidItem());
+    }
+
     public function run(int $amount = -1, int $lineNumber = -1)
     {
         $i = 0;
@@ -81,13 +99,7 @@ class Pipeline
                 }
                 continue;
             } catch (InvalidItemException $exception) {
-                $this->invalid->write([
-                    'line' => $i,
-                    'msg' => $exception->getMessage(),
-                    'item' => json_encode($exception->getInvalidItem()),
-                ]);
-                // WE need a silent LOGGER here
-                //$this->logger->error($exception->getMessage(), $exception->getInvalidItem());
+                $this->handleException($exception, $i);
                 continue;
             }
             if ($i === $lineNumber) {
@@ -105,12 +117,7 @@ class Pipeline
                 continue;
 
             } catch (InvalidItemException $exception) {
-                $this->invalid->write([
-                    'line' => $i,
-                    'msg' => $exception->getMessage(),
-                    'item' => json_encode($exception->getInvalidItem()),
-                ]);
-                $this->logger->error($exception->getMessage());
+                $this->handleException($exception, $i);
                 continue;
             }
         }
